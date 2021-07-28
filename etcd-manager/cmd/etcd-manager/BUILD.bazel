@@ -1,0 +1,41 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "etcd-manager_lib",
+    srcs = ["main.go"],
+    importpath = "sigs.k8s.io/etcdadm/etcd-manager/cmd/etcd-manager",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//pkg/apis/etcd",
+        "//pkg/backup",
+        "//pkg/commands",
+        "//pkg/controller",
+        "//pkg/etcd",
+        "//pkg/hosts",
+        "//pkg/legacy",
+        "//pkg/locking",
+        "//pkg/metrics",
+        "//pkg/pki",
+        "//pkg/privateapi",
+        "//pkg/privateapi/discovery",
+        "//pkg/privateapi/discovery/vfs",
+        "//pkg/tlsconfig",
+        "//pkg/urls",
+        "//pkg/volumes",
+        "//pkg/volumes/alicloud",
+        "//pkg/volumes/aws",
+        "//pkg/volumes/azure",
+        "//pkg/volumes/do",
+        "//pkg/volumes/external",
+        "//pkg/volumes/gce",
+        "//pkg/volumes/openstack",
+        "//vendor/k8s.io/klog/v2:klog",
+        "//vendor/k8s.io/kops/util/pkg/vfs",
+    ],
+)
+
+go_binary(
+    name = "etcd-manager",
+    embed = [":etcd-manager_lib"],
+    visibility = ["//visibility:public"],
+)
