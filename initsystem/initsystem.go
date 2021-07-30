@@ -18,7 +18,11 @@ package initsystem
 
 import (
 	"fmt"
+	"log"
 	"os/exec"
+
+	"sigs.k8s.io/etcdadm/apis"
+	"sigs.k8s.io/etcdadm/initsystem/kubelet"
 )
 
 // InitSystem is the interface that describe behaviors of an init system
@@ -30,7 +34,10 @@ type InitSystem interface {
 
 // GetInitSystem returns an InitSystem for the current system, or error
 // if we cannot detect a supported init system.
-func GetInitSystem() (InitSystem, error) {
+func GetInitSystem(config *apis.EtcdAdmConfig) (InitSystem, error) {
+	log.Printf("[init] using kubelet init system")
+	return kubelet.New(config), nil
+
 	_, err := exec.LookPath("systemctl")
 	if err == nil {
 		return &SystemdInitSystem{}, nil

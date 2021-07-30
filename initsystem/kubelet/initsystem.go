@@ -29,6 +29,12 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+func New(config *apis.EtcdAdmConfig) *InitSystem {
+	return &InitSystem{
+		desiredConfig: config,
+	}
+}
+
 // InitSystem runs etcd under the kubelet
 type InitSystem struct {
 	desiredConfig *apis.EtcdAdmConfig
@@ -160,7 +166,7 @@ func (s *InitSystem) buildPod(name string, cfg *apis.EtcdAdmConfig) (*pod, error
 		"memory": "100Mi",
 	}
 
-	container.Image = "k8s.gcr.io/etcd:" + cfg.Version
+	container.Image = "public.ecr.aws/eks-distro/etcd-io/etcd:v" + cfg.Version
 	container.Command = []string{"etcd"}
 
 	for k, v := range env {
