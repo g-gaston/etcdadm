@@ -196,7 +196,10 @@ var joinCmd = &cobra.Command{
 		if err != nil {
 			log.Printf("[health] Error checking health: %v", err)
 		}
-		ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second) // TODO: bigger timeout when running in pods
+
+		t := 30*time.Second
+		log.Printf("[health] Checking health with timeout [%s]", t)
+		ctx, cancel = context.WithTimeout(context.Background(), t) // TODO: bigger timeout when running in pods in case image needs to be downloaded, we could also preload it?
 		_, err = client.Get(ctx, constants.EtcdHealthCheckKey)
 		cancel()
 		// Healthy because the cluster reaches consensus for the get request,
