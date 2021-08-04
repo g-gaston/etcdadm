@@ -72,7 +72,7 @@ func newInitRunner() *runner {
 		initInstall(),
 		certificates(),
 		snapshot(),
-		configure(),
+		initConfigure(),
 		initStart(),
 		etcdctl(),
 		healthcheck(),
@@ -153,7 +153,7 @@ func snapshot() phase {
 	}
 }
 
-func configure() phase {
+func initConfigure() phase {
 	return &singlePhase{
 		phaseName: "configure",
 		runFunc: func(in *phaseInput) error {
