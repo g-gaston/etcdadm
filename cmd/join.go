@@ -73,7 +73,7 @@ func newJoinRunner() *runner {
 		certificates(),
 		membership(),
 		joinInstall(),
-		configure(),
+		joinConfigure(),
 		joinStart(),
 		etcdctl(),
 		healthcheck(),
@@ -221,6 +221,20 @@ func joinInstall() phase {
 		runFunc: func(in *phaseInput) error {
 			if err := in.initSystem.Install(); err != nil {
 				return fmt.Errorf("failed installing init system components: %w", err)
+			}
+
+			return nil
+		},
+	}
+}
+
+func joinConfigure() phase {
+	return &singlePhase{
+		phaseName: "configure",
+		prerequisites: []phase{membership()},
+		runFunc: func(in *phaseInput) error {
+			if err := in.initSystem.Configure(); err != nil {
+				return fmt.Errorf("error configuring init system: %w", err)
 			}
 
 			return nil
