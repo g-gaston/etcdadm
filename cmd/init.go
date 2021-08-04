@@ -59,7 +59,7 @@ func newInitCmd(runner *runner) *cobra.Command {
 		Use:   "init",
 		Short: "Initialize a new etcd cluster",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runner.run(); err != nil {
+			if err := runner.run(cmd, args); err != nil {
 				log.Fatal(err)
 			}
 		},
@@ -67,21 +67,22 @@ func newInitCmd(runner *runner) *cobra.Command {
 }
 
 func newInitRunner() *runner {
-	runner := newRunner(setup)
+	runner := newRunner(initPhasesSetup)
 	runner.registerPhases(
-		install(),
+		initInstall(),
 		certificates(),
 		snapshot(),
 		configure(),
-		start(),
+		initStart(),
 		etcdctl(),
 		healthcheck(),
+		postInitInstructions(),
 	)
 
 	return runner
 }
 
-func setup() (*phaseInput, error) {
+func initPhasesSetup(_ *cobra.Command, _ []string) (*phaseInput, error) {
 	apis.SetDefaults(&etcdAdmConfig)
 	if err := apis.SetInitDynamicDefaults(&etcdAdmConfig); err != nil {
 		return nil, fmt.Errorf("[defaults] error setting init dynamic defaults: %w", err)
@@ -100,7 +101,7 @@ func setup() (*phaseInput, error) {
 	return in, nil
 }
 
-func install() phase {
+func initInstall() phase {
 	return &singlePhase{
 		phaseName: "install",
 		runFunc: func(in *phaseInput) error {
@@ -165,7 +166,7 @@ func configure() phase {
 	}
 }
 
-func start() phase {
+func initStart() phase {
 	return &singlePhase{
 		phaseName: "start",
 		runFunc: func(in *phaseInput) error {
@@ -214,6 +215,15 @@ func healthcheck() phase {
 				return fmt.Errorf("local etcd endpoint is unhealthy: %w", err)
 			}
 
+			return nil
+		},
+	}
+}
+
+func postInitInstructions() phase {
+	return &singlePhase{
+		phaseName: "post-init-instructions",
+		runFunc: func(in *phaseInput) error {
 			// Output etcdadm join command
 			// TODO print all advertised client URLs (first, join must parse than one endpoint)
 			log.Println("To add another member to the cluster, copy the CA cert/key to its certificate dir and run:")
@@ -221,5 +231,5 @@ func healthcheck() phase {
 
 			return nil
 		},
-	}
+	}	
 }
