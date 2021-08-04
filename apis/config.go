@@ -92,6 +92,8 @@ type EtcdAdmConfig struct {
 	Retry bool
 
 	InitSystem InitSystem
+
+	Endpoint string
 }
 
 // InitSystem represents the different types of init system
