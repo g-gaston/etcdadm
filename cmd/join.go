@@ -230,7 +230,7 @@ func joinInstall() phase {
 
 func joinConfigure() phase {
 	return &singlePhase{
-		phaseName: "configure",
+		phaseName:     "configure",
 		prerequisites: []phase{membership()},
 		runFunc: func(in *phaseInput) error {
 			if err := in.initSystem.Configure(); err != nil {
@@ -244,7 +244,7 @@ func joinConfigure() phase {
 
 func joinStart() phase {
 	return &singlePhase{
-		phaseName: "start",
+		phaseName:     "start",
 		prerequisites: []phase{membership()},
 		runFunc: func(in *phaseInput) error {
 			if err := in.initSystem.EnableAndStartService(constants.UnitFileBaseName); err != nil {

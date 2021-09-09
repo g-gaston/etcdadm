@@ -231,5 +231,5 @@ func postInitInstructions() phase {
 
 			return nil
 		},
-	}	
+	}
 }
