@@ -21,7 +21,7 @@ jobs:
         path: ./etcdadm
         key: ${{ runner.os }}-etcdadm-bin-${{ github.sha }}
 
-  phases-test:
+  cluster-create-phases-test:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -30,7 +30,7 @@ jobs:
       with:
         path: ./etcdadm
         key: ${{ runner.os }}-etcdadm-bin-${{ github.sha }}
-    - name: Run etcdadm phases e2e test
+    - name: Run create cluster with etcdadm phases e2e test
       run: ./test/e2e/cluster_phases.sh
 
 
